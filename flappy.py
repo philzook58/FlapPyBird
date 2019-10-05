@@ -1,4 +1,5 @@
 from itertools import cycle
+from mip import solve
 import random
 import sys
 
@@ -201,14 +202,14 @@ def mainGame(movementInfo):
 
     # list of upper pipes
     upperPipes = [
-        {'x': SCREENWIDTH + 200, 'y': newPipe1[0]['y']},
-        {'x': SCREENWIDTH + 200 + (SCREENWIDTH / 2), 'y': newPipe2[0]['y']},
+        {'x': SCREENWIDTH + 0, 'y': newPipe1[0]['y']}, # changed this from +200 to +0
+        {'x': SCREENWIDTH + 0 + (SCREENWIDTH / 2), 'y': newPipe2[0]['y']},
     ]
 
     # list of lowerpipe
     lowerPipes = [
-        {'x': SCREENWIDTH + 200, 'y': newPipe1[1]['y']},
-        {'x': SCREENWIDTH + 200 + (SCREENWIDTH / 2), 'y': newPipe2[1]['y']},
+        {'x': SCREENWIDTH + 0, 'y': newPipe1[1]['y']},
+        {'x': SCREENWIDTH + 0 + (SCREENWIDTH / 2), 'y': newPipe2[1]['y']},
     ]
 
     pipeVelX = -4
@@ -221,7 +222,7 @@ def mainGame(movementInfo):
     playerRot     =  45   # player's rotation
     playerVelRot  =   3   # angular speed
     playerRotThr  =  20   # rotation threshold
-    playerFlapAcc =  -9   # players speed on flapping
+    playerFlapAcc =  -14   # players speed on flapping
     playerFlapped = False # True when player flaps
 
 
@@ -230,11 +231,21 @@ def mainGame(movementInfo):
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
+            
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if playery > -2 * IMAGES['player'][0].get_height():
-                    playerVelY = playerFlapAcc
-                    playerFlapped = True
+                    #playerVelY += playerFlapAcc
+                    #playerFlapped = True
                     SOUNDS['wing'].play()
+            
+
+        flap, traj = solve(playery, playerVelY, lowerPipes)
+
+
+        if flap:
+            playerVelY += playerFlapAcc
+            playerFlapped = True
+            SOUNDS['wing'].play()
 
         # check for crash here
         crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
@@ -270,8 +281,8 @@ def mainGame(movementInfo):
             playerRot -= playerVelRot
 
         # player's movement
-        if playerVelY < playerMaxVelY and not playerFlapped:
-            playerVelY += playerAccY
+        #if playerVelY < playerMaxVelY and not playerFlapped:
+        playerVelY += playerAccY
         if playerFlapped:
             playerFlapped = False
 
@@ -316,6 +327,7 @@ def mainGame(movementInfo):
         playerSurface = pygame.transform.rotate(IMAGES['player'][playerIndex], visibleRot)
         SCREEN.blit(playerSurface, (playerx, playery))
 
+        pygame.draw.lines(SCREEN, (255,0,0), False, [(x,y) for (x,y) in traj])
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
