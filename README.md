@@ -7,8 +7,8 @@ A Mixed Integer Programming model predictive controller for a [Flappy Bird Clone
 
 Blog posts describing the approach can be found here:
 
-- www.philipzucker.com
-- blog.benwiener.com
+- http://www.philipzucker.com/flappy-bird-as-a-mixed-integer-program/
+- http://blog.benwiener.com/programming/2019/10/06/flappy-bird-mpc.html
 
 How-to (as tested on MacOS)
 ---------------------------
