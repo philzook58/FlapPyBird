@@ -268,6 +268,7 @@ def mainGame(movementInfo):
             pipeMidPos = pipe['x'] + IMAGES['pipe'][0].get_width() / 2
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
                 score += 1
+                print(score)
                 SOUNDS['point'].play()
 
         # playerIndex basex change
@@ -327,7 +328,12 @@ def mainGame(movementInfo):
         playerSurface = pygame.transform.rotate(IMAGES['player'][playerIndex], visibleRot)
         SCREEN.blit(playerSurface, (playerx, playery))
 
-        pygame.draw.lines(SCREEN, (255,0,0), False, [(x,y) for (x,y) in traj])
+
+
+        playerOffsetX = IMAGES['player'][0].get_width() / 2
+        playerOffsetY = IMAGES['player'][0].get_height() / 2
+
+        pygame.draw.lines(SCREEN, (255,0,0), False, [(x+playerOffsetX,y+playerOffsetY) for (x,y) in traj], 3)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
