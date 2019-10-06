@@ -1,9 +1,14 @@
 FlapPyBird-MIP
 ===============
 
-
+![A happy flappy boy](flappy_bird.gif)
 
 A Mixed Integer Programming model predictive controller for a Flappy Bird Clone made using [python-pygame][pygame]
+
+Blog posts describing the approach can be found here:
+
+- www.philipzucker.com
+- blog.benwiener.com
 
 How-to (as tested on MacOS)
 ---------------------------
@@ -32,6 +37,9 @@ $ pipenv run python flappy.py
 5. Use <kbd>&uarr;</kbd> or <kbd>Space</kbd> key to play and <kbd>Esc</kbd> to close the game.
 
 (For x64 windows, get exe [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame))
+
+6. Also install cvxpy and gurobi. Sorry not sorry.
+
 
 Notable forks
 -------------
