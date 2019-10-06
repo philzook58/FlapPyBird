@@ -1,7 +1,9 @@
-FlapPyBird
+FlapPyBird-MIP
 ===============
 
-A Flappy Bird Clone made using [python-pygame][pygame]
+
+
+A Mixed Integer Programming model predictive controller for a Flappy Bird Clone made using [python-pygame][pygame]
 
 How-to (as tested on MacOS)
 ---------------------------
