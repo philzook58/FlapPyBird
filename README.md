@@ -1,4 +1,4 @@
-FlapPyBird-MIP
+FlapPyBird-MPC
 ===============
 
 ![A happy flappy boy](flappy_bird.gif)
