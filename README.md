@@ -1,48 +1,17 @@
-FlapPyBird
+FlapPyBird-MPC
 ===============
 
-A Flappy Bird Clone made using [python-pygame][pygame]
+![A happy flappy boy](flappy_bird.gif)
+
+A Mixed Integer Programming model predictive controller for a [Flappy Bird Clone](https://github.com/sourabhv/FlapPyBird). The meat of the controller is found in `mip.py`. Most of the rest is unmodified from the original flappy bird clone.
+
+Blog posts describing the approach can be found here:
+
+- http://www.philipzucker.com/flappy-bird-as-a-mixed-integer-program/
+- http://blog.benwiener.com/programming/2019/10/06/flappy-bird-mpc.html
 
 How-to (as tested on MacOS)
 ---------------------------
 
-1. Install Python 3.x (recommended) 2.x from [here](https://www.python.org/download/releases/)
-
-2. Install [pipenv]
-
-2. Install PyGame 1.9.x from [here](http://www.pygame.org/download.shtml)
-
-3. Clone the repository:
-
-```bash
-$ git clone https://github.com/sourabhv/FlapPyBird
-```
-
-or download as zip and extract.
-
-4. In the root directory run
-
-```bash
-$ pipenv install
-$ pipenv run python flappy.py
-```
-
-5. Use <kbd>&uarr;</kbd> or <kbd>Space</kbd> key to play and <kbd>Esc</kbd> to close the game.
-
-(For x64 windows, get exe [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame))
-
-Notable forks
--------------
-
-- [FlappyBird Fury Mode](https://github.com/Cc618/FlapPyBird)
-
-Made something awesome from FlapPyBird? Add it to the list :)
-
-
-ScreenShot
-----------
-
-![Flappy Bird](screenshot1.png)
-
-[pygame]: http://www.pygame.org
-[pipenv]: https://pipenv.readthedocs.io/en/latest/
+1. Install pygame, cvxpy, gurobi, numpy. 
+2. `python flappy.py` hit space and watch her go.
