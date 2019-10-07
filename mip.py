@@ -3,79 +3,72 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-N = 20 # time steps to look ahead
-path = cvx.Variable((N, 2)) # y pos and vel
-flap = cvx.Variable(N-1, boolean=True) # whether or not the bird should flap in each step
-last_solution = [False, False, False]
-last_path = [(0,0),(0,0)]
+N = 25 # time steps to look ahead
+path = cvx.Variable((N, 2)) # initialize the y pos and y velocity
+flap = cvx.Variable(N-1, boolean=True) # initialize the inputs, whether or not the bird should flap in each step
+last_solution = [False, False, False] # seed last solution
+last_path = [(0,0),(0,0)] # seed last path
 
-PIPEGAPSIZE  = 100
+PIPEGAPSIZE  = 100 # gap between upper and lower pipe
 PIPEWIDTH = 52
 BIRDWIDTH = 34
 BIRDHEIGHT = 24
-BIRDDIAMETER = np.sqrt(BIRDHEIGHT**2 + BIRDWIDTH**2)
-SKY = 0
-GROUND = (512*0.79)-1
-PLAYERX = 57
+BIRDDIAMETER = np.sqrt(BIRDHEIGHT**2 + BIRDWIDTH**2) # the bird rotates in the game, so we use it's maximum extent
+SKY = 0 # location of sky
+GROUND = (512*0.79)-1 # location of ground
+PLAYERX = 57 # location of bird
 
 
 def getPipeConstraints(x, y, lowerPipes):
-    constraints = []
+    constraints = [] # init pipe constraint list
     for pipe in lowerPipes:
         dist_from_front = pipe['x'] - x - BIRDDIAMETER
         dist_from_back = pipe['x'] - x + PIPEWIDTH
         if (dist_from_front < 0) and (dist_from_back > 0):
-            #print(pipe['y'] + BIRDDIAMETER,  pipe['y'] + PIPEGAPSIZE)
             constraints += [y <= (pipe['y'] - BIRDDIAMETER)] # y above lower pipe
             constraints += [y >= (pipe['y'] - PIPEGAPSIZE)] # y below upper pipe
-    #if len(constraints) > 0:
-        #print(constraints)
     return constraints
 
 def solve(playery, playerVelY, lowerPipes):
-    global last_path, last_solution
 
-    print(last_path)
-    pipeVelX = -4
+    pipeVelX = -4 # speed in x
     playerAccY    =   1   # players downward accleration
     playerFlapAcc =  -14   # players speed on flapping
 
-    # unpack variables
+    # unpack path variables
     y = path[:,0]
-
     vy = path[:,1]
 
-    c = [] #constraints
-    c += [y <= GROUND, y >= SKY]
-    c += [y[0] == playery, vy[0] == playerVelY]
+    c = [] # init constraint list
+    c += [y <= GROUND, y >= SKY] # constraints for sky and ground
+    c += [y[0] == playery, vy[0] == playerVelY] # initial conditions
 
     x = PLAYERX
-    xs = [x]
-    for t in range(N-1):
-        dt = t//10 + 1
-        #dt = 1
-        x -= dt * pipeVelX
-        xs += [x]
-        c += [vy[t + 1] ==  vy[t] + playerAccY * dt + playerFlapAcc * flap[t] ]
-        c += [y[t + 1] ==  y[t] + vy[t + 1]*dt ]
-        c += getPipeConstraints(x, y[t+1], lowerPipes)
+    xs = [x] # init x list
+    for t in range(N-1): # look ahead
+        dt = t//15 + 1 # let time get coarser further in the look ahead
+        x -= dt * pipeVelX # update x
+        xs += [x] # add to list
+        c += [vy[t + 1] ==  vy[t] + playerAccY * dt + playerFlapAcc * flap[t] ] # add y velocity constraint, f=ma
+        c += [y[t + 1] ==  y[t] + vy[t + 1]*dt ] # add y constraint, dy/dt = a
+        c += getPipeConstraints(x, y[t+1], lowerPipes) # add pipe constraints
 
+    objective = cvx.Minimize(cvx.sum(flap) + 10* cvx.sum(cvx.abs(vy))) # minimize total flaps and y velocity
 
-    #objective = cvx.Minimize(cvx.sum(flap)) # minimize total fuel use
-    objective = cvx.Minimize(cvx.sum(flap) + 10* cvx.sum(cvx.abs(vy))) # minimize total fuel use
-
-    prob = cvx.Problem(objective, c)
+    prob = cvx.Problem(objective, c) # init the problem
     try:
-        prob.solve(verbose = False, solver="GUROBI")
-        #print(np.round(flap.value).astype(bool))
-        #plt.plot(y.value)
-        #plt.show()
-        last_path = list(zip(xs, y.value))
-        last_solution = np.round(flap.value).astype(bool)
-        return last_solution[0], last_path
+        #prob.solve(verbose = False) # use this line for open source solvers
+        prob.solve(verbose = False, solver="GUROBI") # use this line if you have access to Gurobi, a faster solver
+
+        last_path = list(zip(xs, y.value)) # store the path
+        last_solution = np.round(flap.value).astype(bool) # store the solution
+        return last_solution[0], last_path # return the next input and path for plotting
     except:
-        last_solution = last_solution[1:]
-        last_path = [((x-4), y) for (x,y) in last_path[1:]]
-        return last_solution[0], last_path
+        try:
+            last_solution = last_solution[1:] # if we didn't get a solution this round, use the last solution
+            last_path = [((x-4), y) for (x,y) in last_path[1:]]
+            return last_solution[0], last_path
+        except:
+            return False, [(0,0), (0,0)] # if we fail to solve many times in a row, do nothing
 
 
