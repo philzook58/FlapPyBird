@@ -13,7 +13,7 @@ PIPEGAPSIZE  = 100 # gap between upper and lower pipe
 PIPEWIDTH = 52
 BIRDWIDTH = 34
 BIRDHEIGHT = 24
-BIRDDIAMETER = np.sqrt(BIRDHEIGHT**2 + BIRDWIDTH**2) # the bird rotates in the game, so we use it's maximum extent
+BIRDDIAMETER = np.sqrt(BIRDHEIGHT**2 + BIRDWIDTH**2) # the bird rotates in the game, so we use its maximum extent
 SKY = 0 # location of sky
 GROUND = (512*0.79)-1 # location of ground
 PLAYERX = 57 # location of bird
@@ -34,7 +34,7 @@ def getPipeConstraintsDistance(x, y, lowerPipes):
 def solve(playery, playerVelY, lowerPipes):
 
     pipeVelX = -4 # speed in x
-    playerAccY    =   1   # players downward accleration
+    playerAccY    =   1   # players downward acceleration
     playerFlapAcc =  -14   # players speed on flapping
 
     # unpack path variables
