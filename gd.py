@@ -24,5 +24,5 @@ def getPipeConstraints(x, y, lowerPipes):
 def solve(playery, playerVelY, lowerPipes):
 
     pipeVelX = -4 # speed in x
-    playerAccY    =   1   # players downward accleration
+    playerAccY    =   1   # players downward acceleration
     playerFlapAcc =  -20   # players speed on flapping
